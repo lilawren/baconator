@@ -4,6 +4,6 @@ by Lawrence Li
 
 Created using create-react-app
 
-`cd baconator`
-`npm install`
-`npm start`
+1. `cd baconator`
+2. 'npm install`
+3. `npm start`
