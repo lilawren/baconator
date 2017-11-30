@@ -2,27 +2,36 @@ import React from 'react';
 import './Home.css';
 
 import PostingRow from './PostingRow.js'
+import SubscriptionsDropdown from './SubscriptionsDropdown.js'
 
 class Home extends React.Component {
     constructor(props) {
         super(props);
+
+        let subscriptions = JSON.parse(localStorage.getItem('subscriptions'));
+        if (!subscriptions) {
+            localStorage.setItem('subscriptions', JSON.stringify(['news', 'tech']));
+        }
+
         this.state = {
-            posts: []
+            posts: [],
+            subscriptions: subscriptions
         }
     }
 
     render() {
         return (
             <div className="home">
+                <SubscriptionsDropdown subscriptions={this.state.subscriptions} />
                 {this.state.posts.map((post, index) =>
-                    <PostingRow ups={post.ups} thumbnail={post.thumbnail} title={post.title} subreddit={post.subreddit} url={post.url}/>
+                    <PostingRow key={index} ups={post.ups} thumbnail={post.thumbnail} title={post.title} subreddit={post.subreddit} url={post.url}/>
                 )}
             </div>
         );
     }
 
     componentDidMount() {
-        fetch('https://www.reddit.com/r/todayilearned/top.json?limit=10').then((res) => res.json()).then((resJson) => this.filterJSON(resJson));
+        fetch('https://www.reddit.com/r/news/top.json?limit=10').then((res) => res.json()).then((resJson) => this.filterJSON(resJson));
     }
 
     filterJSON(json) {
