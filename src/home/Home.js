@@ -8,30 +8,115 @@ class Home extends React.Component {
     constructor(props) {
         super(props);
 
-        let subscriptions = JSON.parse(localStorage.getItem('subscriptions'));
-        if (!subscriptions) {
-            localStorage.setItem('subscriptions', JSON.stringify(['news', 'tech']));
+        let subscriptions = this.getSubscriptions();
+        let data = []; // data could have been a hash table but using arrays here so we can use the map function in rendering
+        for (let subreddit of subscriptions) {
+            data.push({
+                subreddit: subreddit,
+                posts: []
+            });
         }
 
         this.state = {
-            posts: [],
-            subscriptions: subscriptions
+            data: data,
         }
+
+        this.onSubscriptionAdd = this.onSubscriptionAdd.bind(this);
+        this.onSubscriptionRemove = this.onSubscriptionRemove.bind(this);
+    }
+
+    // returns array of subreddits subscribed to e.g. ['news', 'cats']
+    getSubscriptions() {
+        let subscriptions = JSON.parse(localStorage.getItem('subscriptions'));
+        if (!subscriptions || subscriptions.length < 1) {
+            localStorage.setItem('subscriptions', JSON.stringify(['news']));
+        }
+        return subscriptions;
     }
 
     render() {
         return (
             <div className="home">
-                <SubscriptionsDropdown subscriptions={this.state.subscriptions} />
-                {this.state.posts.map((post, index) =>
-                    <PostingRow key={index} ups={post.ups} thumbnail={post.thumbnail} title={post.title} subreddit={post.subreddit} url={post.url}/>
-                )}
+                <SubscriptionsDropdown
+                    subscriptions={this.getSubscriptions()}
+                    onSubscriptionAdd={this.onSubscriptionAdd}
+                    onSubscriptionRemove={this.onSubscriptionRemove}
+                />
+
+                { this.renderPosts() }
+
             </div>
         );
     }
 
-    componentDidMount() {
-        fetch('https://www.reddit.com/r/news/top.json?limit=10').then((res) => res.json()).then((resJson) => this.filterJSON(resJson));
+    renderPosts() {
+        return this.state.data.map((obj) => {
+                let subreddit = obj.subreddit;
+
+                return obj.posts.map((post, index) =>
+                    <PostingRow
+                        key={index}
+                        ups={post.ups}
+                        thumbnail={post.thumbnail}
+                        title={post.title}
+                        url={post.url}
+                        subreddit={subreddit}
+                    />
+                );
+            });
+    }
+
+    async onSubscriptionAdd(newSubreddit) {
+        let subsriptions = this.getSubscriptions();
+        if (subsriptions.indexOf(newSubreddit) !== -1) {
+            alert('Already subscribed to ' + newSubreddit);
+            return;
+        }
+        subsriptions.push(newSubreddit);
+        localStorage.setItem('subscriptions', JSON.stringify(subsriptions));
+
+        // update state obj to fetch posts for new subreddit
+        let data = this.state.data;
+        let posts = await this.fetchJSONFromSubreddit(newSubreddit);
+        data.push({
+            subreddit: newSubreddit,
+            posts: posts
+        });
+
+        this.setState({data: data});
+    }
+
+    onSubscriptionRemove(subreddit) {
+        let subscriptions = this.getSubscriptions();
+        subscriptions.splice(subscriptions.indexOf(subreddit), 1);
+        localStorage.setItem('subscriptions', JSON.stringify(subscriptions));
+
+        // update state obj to remove posts for removed subreddit
+        let data = this.state.data;
+        for (let index in data) {
+            let obj = data[index];
+            if (obj.subreddit === subreddit) {
+                data.splice(index, 1);
+            }
+        }
+
+        this.setState({data: data});
+    }
+
+    async componentDidMount() {
+        // fetch all initial posts
+        let subscriptions = this.getSubscriptions();
+
+        let data = this.state.data;
+        for (let obj of data) {
+            obj.posts = await this.fetchJSONFromSubreddit(obj.subreddit);
+        }
+
+        this.setState({ data: data });
+    }
+
+    async fetchJSONFromSubreddit(subreddit) {
+        return fetch('https://www.reddit.com/r/' + subreddit + '/top.json?limit=20').then((res) => res.json()).then((resJson) => this.filterJSON(resJson));
     }
 
     filterJSON(json) {
@@ -47,8 +132,7 @@ class Home extends React.Component {
                 subreddit: postInfo.subreddit
             });
         }
-
-        this.setState({ posts: filteredJSON });
+        return filteredJSON;
     }
 }
 
