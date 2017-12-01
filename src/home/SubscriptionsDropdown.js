@@ -5,7 +5,7 @@ class SubscriptionsDropdown extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            opened: false,
+            dropped: false,
             newSubreddit: ''
         }
 
@@ -13,26 +13,33 @@ class SubscriptionsDropdown extends React.Component {
         this.onAddNewChange = this.onAddNewChange.bind(this);
         this.onSubredditAdd = this.onSubredditAdd.bind(this);
         this.onSubredditRemove = this.onSubredditRemove.bind(this);
+        this.onInputKeyUp = this.onInputKeyUp.bind(this);
     }
 
     renderSubreddit(subreddit) {
         return (
-            <div key={subreddit}>
+            <div className='subreddit-row' key={subreddit}>
                 {subreddit}
                 <button onClick={() => this.onSubredditRemove(subreddit)}>X</button>
-                <hr/>
             </div>
         );
     }
 
     render() {
         return (
-            <div className="subs-dropdown">
-                <button onClick={this.toggleDropdown}>My subreddits</button>
+            <div className={"subs-dropdown" + (this.state.dropped ? ' dropped' : '')}>
+                <button onClick={this.toggleDropdown}>
+                    {this.state.dropped ? <span>&#9660;</span> : <span>&#9650;</span>}
+                </button>
 
-                {this.state.opened &&
+                {this.state.dropped &&
                     <div>
-                        <input value={this.state.newSubreddit} placeholder='Add subreddit' onChange={this.onAddNewChange} />
+                        <input
+                            value={this.state.newSubreddit}
+                            placeholder='Enter subreddit...'
+                            onKeyUp={this.onInputKeyUp}
+                            onChange={this.onAddNewChange}
+                        />
                         <button onClick={this.onSubredditAdd}>Add</button>
                         {this.props.subscriptions.map(subreddit => this.renderSubreddit(subreddit))}
                     </div>
@@ -43,6 +50,12 @@ class SubscriptionsDropdown extends React.Component {
 
     onAddNewChange(e) {
         this.setState({newSubreddit: e.target.value});
+    }
+
+    onInputKeyUp(e) {
+        if (e.key === 'Enter') { // enter key
+            this.onSubredditAdd();
+        }
     }
 
     onSubredditAdd() {
@@ -57,7 +70,7 @@ class SubscriptionsDropdown extends React.Component {
 
     toggleDropdown() {
         this.setState((prevState) => {
-            return { opened: !prevState.opened}
+            return { dropped: !prevState.dropped}
         });
     }
 }

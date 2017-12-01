@@ -6,11 +6,13 @@ class PostingRow extends React.Component {
     render() {
         return (
             <div className="posting-row">
-                {this.props.ups}
-                <img src={this.props.thumbnail} />
-                <a href={this.props.url}>{this.props.title}</a>
-                {this.props.subreddit}
-                <hr/>
+                <div className='upvotes'>{this.props.ups}</div>
+                <a href={this.props.url}>
+                    <img src={(this.props.thumbnail.length > 0 && this.props.thumbnail !== 'self') ? this.props.thumbnail : 'https://www.easyguides.com.au/wp-content/uploads/2015/06/Generic-news-icon.png'} alt='thumbnail' />
+                </a>
+                <a className='post-title' href={this.props.url}>{this.props.title}</a>
+                <div className='spacer'/>
+                <div className='subreddit'>{'r/' + this.props.subreddit}</div>
             </div>
         );
     }

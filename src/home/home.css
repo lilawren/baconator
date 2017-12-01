@@ -1,0 +1,26 @@
+.home {
+    position: relative;
+}
+
+.header {
+    background: #ff3b3f;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    position: fixed;
+    width: 100%;
+}
+
+.header-logo {
+    color: white;
+    text-align: center;
+    margin: 0;
+    text-align: center;
+}
+
+.home > .posting-row {
+    padding-top: 65px;
+}
+
+.home > .posting-row ~ .posting-row {
+    padding-top: 0px;
+}

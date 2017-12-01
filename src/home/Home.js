@@ -25,23 +25,17 @@ class Home extends React.Component {
         this.onSubscriptionRemove = this.onSubscriptionRemove.bind(this);
     }
 
-    // returns array of subreddits subscribed to e.g. ['news', 'cats']
-    getSubscriptions() {
-        let subscriptions = JSON.parse(localStorage.getItem('subscriptions'));
-        if (!subscriptions || subscriptions.length < 1) {
-            localStorage.setItem('subscriptions', JSON.stringify(['news']));
-        }
-        return subscriptions;
-    }
-
     render() {
         return (
             <div className="home">
-                <SubscriptionsDropdown
-                    subscriptions={this.getSubscriptions()}
-                    onSubscriptionAdd={this.onSubscriptionAdd}
-                    onSubscriptionRemove={this.onSubscriptionRemove}
-                />
+                <div className='header'>
+                    <SubscriptionsDropdown
+                        subscriptions={this.getSubscriptions()}
+                        onSubscriptionAdd={this.onSubscriptionAdd}
+                        onSubscriptionRemove={this.onSubscriptionRemove}
+                    />
+                    <h1 className='header-logo'>baconator</h1>
+                </div>
 
                 { this.renderPosts() }
 
@@ -52,7 +46,6 @@ class Home extends React.Component {
     renderPosts() {
         return this.state.data.map((obj) => {
                 let subreddit = obj.subreddit;
-
                 return obj.posts.map((post, index) =>
                     <PostingRow
                         key={index}
@@ -64,6 +57,15 @@ class Home extends React.Component {
                     />
                 );
             });
+    }
+
+    // returns array of subreddits subscribed to e.g. ['news', 'cats']
+    getSubscriptions() {
+        let subscriptions = JSON.parse(localStorage.getItem('subscriptions'));
+        if (!subscriptions || subscriptions.length < 1) {
+            localStorage.setItem('subscriptions', JSON.stringify(['news']));
+        }
+        return subscriptions;
     }
 
     async onSubscriptionAdd(newSubreddit) {
