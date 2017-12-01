@@ -65,8 +65,11 @@ class Home extends React.Component {
     getSubscriptions() {
         let subscriptions = JSON.parse(localStorage.getItem('subscriptions'));
         if (!subscriptions || subscriptions.length < 1) {
-            localStorage.setItem('subscriptions', JSON.stringify(['news']));
+            let defaultSubreddit = ['news'];
+            localStorage.setItem('subscriptions', JSON.stringify(defaultSubreddit));
+            subscriptions = defaultSubreddit;
         }
+
         return subscriptions;
     }
 
