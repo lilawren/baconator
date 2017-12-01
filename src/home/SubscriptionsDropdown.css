@@ -18,24 +18,3 @@
     justify-content: space-between;
     margin-top: 3px;
 }
-
-
-button {
-    background: rgb(75, 222, 252);
-    color: #fff;
-    border: none;
-    border-radius: 20px;
-    /* box-shadow: none; */
-    text-shadow:none;
-}
-
-button:hover {
-    background: rgb(150, 226, 241);
-    color: #fff;
-    border: none;
-    border-radius: 20px;
-    /* box-shadow: 5px 5px 5px #eee; */
-    text-shadow:none;
-}
-
-button:focus {outline:0;}

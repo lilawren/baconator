@@ -4,6 +4,8 @@ import './Home.css';
 import PostingRow from './PostingRow.js'
 import SubscriptionsDropdown from './SubscriptionsDropdown.js'
 
+let NUM_POSTS = 20;
+
 class Home extends React.Component {
     constructor(props) {
         super(props);
@@ -107,8 +109,6 @@ class Home extends React.Component {
 
     async componentDidMount() {
         // fetch all initial posts
-        let subscriptions = this.getSubscriptions();
-
         let data = this.state.data;
         for (let obj of data) {
             obj.posts = await this.fetchJSONFromSubreddit(obj.subreddit);
@@ -118,7 +118,7 @@ class Home extends React.Component {
     }
 
     async fetchJSONFromSubreddit(subreddit) {
-        return fetch('https://www.reddit.com/r/' + subreddit + '/top.json?limit=20').then((res) => res.json()).then((resJson) => this.filterJSON(resJson));
+        return fetch('https://www.reddit.com/r/' + subreddit + '/top.json?limit=' + NUM_POSTS).then((res) => res.json()).then((resJson) => this.filterJSON(resJson));
     }
 
     filterJSON(json) {

@@ -24,3 +24,24 @@
 .home > .posting-row ~ .posting-row {
     padding-top: 0px;
 }
+
+button {
+    background: rgb(75, 222, 252);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    text-shadow:none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: rgb(150, 226, 241);
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    text-shadow:none;
+}
+
+button:focus {
+    outline:0;
+}
