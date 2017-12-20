@@ -1,6 +1,6 @@
 # baconator - minimalist Reddit viewer for the addicted
 
-by Lawrence Li
+Try the <a href='https://baconator-reddit.herokuapp.com/'>demo!</a>
 
 Created using create-react-app (ReactJS)
 
